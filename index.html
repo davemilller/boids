@@ -2,17 +2,32 @@
 <html>
   <head>
     <meta charset="utf-8"/>
+    <link rel="stylesheet" href="global.css">
     <title>Boids</title>
     <script src="./boids.js"></script>
-    <style type="text/css">
-      body {
-        margin: 0;
-        background: #282c34;
-        overflow: hidden;
-      }
-    </style>
   </head>
   <body>
+    <div class="tab">
+      <button class="tablink" onclick="checkVals(event, 'numBoids')">Number of boids</button>
+      <button class="tablink" onclick="checkVals(event, 'maxSpeed')">Max speed</button>
+      <button class="tablink" onclick="checkVals(event, 'visualRange')">Visual range</button>
+    </div>
+
+    <div id="numBoids" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">x</span>
+      <input type="range" min="10" max="150" value="75" class="slider" id="boidSlider" oninput="updateVals(event, 'boidSlider')">
+    </div>
+
+    <div id="maxSpeed" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">x</span>
+      <input type="range" min="1" max="20" value="10" class="slider" id="speedSlider" oninput="updateVals(event, 'speedSlider')">
+    </div>
+
+    <div id="visualRange" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">x</span>
+      <input type="range" min="10" max="150" value="75" class="slider" id="visRangeSlider" oninput="updateVals(event, 'visRangeSlider')">
+    </div>
+
     <canvas id="boids" width="150" height="150"></canvas>
   </body>
 </html>

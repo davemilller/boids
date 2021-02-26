@@ -1,8 +1,9 @@
 let width = 150;
 let height = 150;
 
-const numBoids = 100;
-const visualRange = 100;
+var numBoids = 100;
+var visualRange = 100;
+var speedLimit = 15;
 const DRAW_TRAIL = false;
 
 var boids = [];
@@ -40,6 +41,36 @@ function sizeCanvas() {
   height = window.innerHeight;
   canvas.width = width;
   canvas.height = height;
+}
+
+//dealing with tabs
+function checkVals(event, valName) {
+  var tabcontent, tablinks;
+
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (var i=0; i< tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  tablinks = document.getElementsByClassName("tablink");
+  for (var i=0; i< tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  document.getElementById(valName).style.display = "block";
+  event.currentTarget.className += " active";
+}
+
+//dealing with slider vals
+function updateVals(event, valName) {
+  var slider = document.getElementById(valName);
+  var value = slider.value;
+
+  if (valName == "speedSlider") { speedLimit = value; }
+
+  if (valName == "boidSlider") { numBoids = value; }
+
+  if (valName == "visRangeSlider") { visualRange = value; }
 }
 
 //keeps the boids away from the edges of the window
@@ -133,7 +164,6 @@ function matchVelocity(boid) {
 
 //limit speed so the boids cannot go arbitrarily fast
 function limitSpeed(boid) {
-  const speedLimit = 15;
 
   const speed = Math.sqrt(Math.pow(boid.dx, 2) + Math.pow(boid.dy, 2));
   if (speed > speedLimit) {
