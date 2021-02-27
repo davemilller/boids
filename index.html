@@ -11,21 +11,39 @@
       <button class="tablink" onclick="checkVals(event, 'numBoids')">Number of boids</button>
       <button class="tablink" onclick="checkVals(event, 'maxSpeed')">Max speed</button>
       <button class="tablink" onclick="checkVals(event, 'visualRange')">Visual range</button>
+      <button class="tablink" onclick="checkVals(event, 'velocityFactor')">Alignment</button>
+      <button class="tablink" onclick="checkVals(event, 'avoidFactor')">Separation</button>
+      <button class="tablink" onclick="checkVals(event, 'centeringFactor')">Cohesion</button>
     </div>
 
     <div id="numBoids" class="tabcontent">
-      <span onclick="this.parentElement.style.display='none'">x</span>
+      <span onclick="this.parentElement.style.display='none'">X</span>
       <input type="range" min="10" max="150" value="75" class="slider" id="boidSlider" oninput="updateVals(event, 'boidSlider')">
     </div>
 
     <div id="maxSpeed" class="tabcontent">
-      <span onclick="this.parentElement.style.display='none'">x</span>
+      <span onclick="this.parentElement.style.display='none'">X</span>
       <input type="range" min="1" max="20" value="10" class="slider" id="speedSlider" oninput="updateVals(event, 'speedSlider')">
     </div>
 
     <div id="visualRange" class="tabcontent">
-      <span onclick="this.parentElement.style.display='none'">x</span>
+      <span onclick="this.parentElement.style.display='none'">X</span>
       <input type="range" min="10" max="150" value="75" class="slider" id="visRangeSlider" oninput="updateVals(event, 'visRangeSlider')">
+    </div>
+
+    <div id="velocityFactor" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">X</span>
+      <input type="range" min="0.02" max="0.1" value="0.05" class="slider" id="velocityFactory" oninput="updateVals(event, 'velocityFactor')">
+    </div>
+
+    <div id="avoidFactor" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">X</span>
+      <input type="range" min="0.02" max="0.2" value="0.05" class="slider" id="avoidFactor" oninput="updateVals(event, 'avoidFactor')">
+    </div>
+
+    <div id="centeringFactor" class="tabcontent">
+      <span onclick="this.parentElement.style.display='none'">X</span>
+      <input type="range" min="0.02" max="0.05" value="0.005" class="slider" id="centeringFactor" oninput="updateVals(event, 'centeringFactor')">
     </div>
 
     <canvas id="boids" width="150" height="150"></canvas>

@@ -3,7 +3,12 @@ let height = 150;
 
 var numBoids = 100;
 var visualRange = 100;
-var speedLimit = 15;
+var speedLimit = 12;
+
+var velocityFactor = 0.05;
+var avoidFactor = 0.05;
+var centeringFactor = 0.005;
+
 const DRAW_TRAIL = false;
 
 var boids = [];
@@ -11,14 +16,16 @@ var boids = [];
 //initialize boid positions and velocities
 function init() {
   for (var i=0; i< numBoids; i++) {
-    boids[boids.length] = {
+    boids[i] = {
       x: Math.random() * width,
       y: Math.random() * height,
       dx: Math.random() * 10 - 5,
       dy: Math.random() * 10 - 5,
+      pred: false,
       history: [],
     };
   }
+  boids[0].pred = true;
 }
 
 //Euclidean distance between 2 boids
@@ -71,6 +78,12 @@ function updateVals(event, valName) {
   if (valName == "boidSlider") { numBoids = value; }
 
   if (valName == "visRangeSlider") { visualRange = value; }
+
+  if (valName == "velocityFactor") { velocityFactor = value }
+
+  if (valName == "avoidFactor") { avoidFactor = value }
+
+  if (valName == "centeringFactor") { centeringFactor = value }
 }
 
 //keeps the boids away from the edges of the window
@@ -94,7 +107,6 @@ function stayInBounds(boid) {
 
 //Move towards the center of all boids in visual range
 function flyTowardsCenter(boid) {
-  const centeringFactor = 0.005;
 
   let centerX = 0;
   let centerY = 0;
@@ -119,8 +131,8 @@ function flyTowardsCenter(boid) {
 
 //avoid other boids within the range minDist
 function avoidOthers(boid) {
-  const minDist = 20;
-  const avoidFactor = 0.05;
+  minDist = 20;
+  if (boid.pred) { var minDist = 40; }
   let moveX = 0;
   let moveY = 0;
 
@@ -139,7 +151,6 @@ function avoidOthers(boid) {
 
 //adjust velocity to match the velocity of other boids in visual range
 function matchVelocity(boid) {
-  const velocityFactor = 0.05;
 
   let avgDX = 0;
   let avgDY = 0;
@@ -170,6 +181,11 @@ function limitSpeed(boid) {
     boid.dx = (boid.dx / speed) * speedLimit;
     boid.dy = (boid.dy / speed) * speedLimit;
   }
+  predSpeed = speedLimit - 6;
+  if (boid.pred && speed > predSpeed) {
+    boid.dx = (boid.dx / speed) * predSpeed;
+    boid.dy = (boid.dy / speed) * predSpeed;
+  }
 }
 
 //draw a boid to the screen
@@ -178,7 +194,9 @@ function drawBoid(ctx, boid) {
   ctx.translate(boid.x, boid.y);
   ctx.rotate(angle);
   ctx.translate(-boid.x, -boid.y);
-  ctx.fillStyle = "#558cf4";
+
+  if (boid.pred) { ctx.fillStyle = "#ff3333" }
+  else { ctx.fillStyle = "#558cf4" }
   ctx.beginPath();
   ctx.moveTo(boid.x, boid.y);
   ctx.lineTo(boid.x - 15, boid.y + 5);
@@ -198,6 +216,27 @@ function drawBoid(ctx, boid) {
   }
 }
 
+function avoidPredator(boid) {
+  predFactor = 1.1;
+  if (!boid.pred) {
+    const predDist = 60;
+    let moveX = 0;
+    let moveY = 0;
+
+    for (let otherBoid of boids) {
+      if (otherBoid !== boid && otherBoid.pred) {
+        if (getDist(boid, otherBoid) < predDist) {
+          moveX += boid.x - otherBoid.x;
+          moveY += boid.y - otherBoid.y;
+        }
+      }
+    }
+
+    boid.dx += moveX * predFactor;
+    boid.dy += moveY * predFactor;
+  }
+}
+
 //animation loop
 function animationLoop() {
   for (let boid of boids) {
@@ -206,6 +245,7 @@ function animationLoop() {
     matchVelocity(boid);
     limitSpeed(boid);
     stayInBounds(boid);
+    avoidPredator(boid);
 
     boid.x += boid.dx;
     boid.y += boid.dy;
