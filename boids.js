@@ -9,8 +9,6 @@ var velocityFactor = 0.05;
 var avoidFactor = 0.05;
 var centeringFactor = 0.005;
 
-const DRAW_TRAIL = false;
-
 var boids = [];
 
 //initialize boid positions and velocities
@@ -25,6 +23,7 @@ function init() {
       history: [],
     };
   }
+
   boids[0].pred = true;
 }
 
@@ -131,14 +130,18 @@ function flyTowardsCenter(boid) {
 
 //avoid other boids within the range minDist
 function avoidOthers(boid) {
-  minDist = 20;
-  if (boid.pred) { var minDist = 40; }
+  var minDist = 20;
+  var predDist = 50;
   let moveX = 0;
   let moveY = 0;
 
   for (let otherBoid of boids) {
     if (otherBoid !== boid) {
-      if (getDist(boid, otherBoid) < minDist) {
+      if (boid.pred && getDist(boid, otherBoid) < predDist) {
+        moveX += boid.x + otherBoid.x;
+        moveY += boid.y + otherBoid.y;
+      }
+      else if (!boid.pred && getDist(boid, otherBoid) < minDist) {
         moveX += boid.x - otherBoid.x;
         moveY += boid.y - otherBoid.y;
       }
@@ -204,20 +207,10 @@ function drawBoid(ctx, boid) {
   ctx.lineTo(boid.x, boid.y);
   ctx.fill();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  if (DRAW_TRAIL) {
-    ctx.strokeStyle = "#558cf466";
-    ctx.beginPath();
-    ctx.moveTo(boid.history[0][0], boid.history[0][1]);
-    for (const point of boid.history) {
-      ctx.lineTo(point[0], point[1]);
-    }
-    ctx.stroke();
-  }
 }
 
 function avoidPredator(boid) {
-  predFactor = 1.1;
+  predFactor = 1.05;
   if (!boid.pred) {
     const predDist = 60;
     let moveX = 0;
